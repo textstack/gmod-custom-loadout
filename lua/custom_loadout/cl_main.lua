@@ -226,12 +226,9 @@ function CLoadout:Load()
 end
 
 -- late init (to make sure all weapons have been registered)
-hook.Add( "InitPostEntity", "CLoadout_Initialize", function()
-    hook.Remove( "InitPostEntity", "CLoadout_Initialize" )
-
-    -- on rare occasions it just didnt work
-    -- if called right at InitPostEntity
-    timer.Simple( 1, function() CLoadout:Init() end )
+hook.Add( "SetupMove", "CLoadout_Initialize", function()
+    CLoadout:Init()
+    hook.Remove( "SetupMove", "CLoadout_Initialize" )
 end )
 
 hook.Add( "OnPlayerChat", "CLoadout_ChatCommand", function( ply, text )
