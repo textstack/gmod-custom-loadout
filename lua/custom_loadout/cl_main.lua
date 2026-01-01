@@ -226,10 +226,16 @@ function CLoadout:Load()
 end
 
 -- late init (to make sure all weapons have been registered)
+-- linux clients do not run InitPostEntity on servers
 local initHook = game.SinglePlayer() and "InitPostEntity" or "SetupMove"
 hook.Add( initHook, "CLoadout_Initialize", function()
-    timer.Simple(1, function() CLoadout:Init() end)
     hook.Remove( initHook, "CLoadout_Initialize" )
+    if CLoadout.initialized then return end
+
+    timer.Simple( 0, function()
+        CLoadout.initialized = true
+        CLoadout:Init()
+    end )
 end )
 
 hook.Add( "OnPlayerChat", "CLoadout_ChatCommand", function( ply, text )
